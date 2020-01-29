@@ -4,6 +4,7 @@ from api.v1.views import app_views
 from flask import jsonify, abort, make_response, request
 from models import storage
 from models.user import User
+import hashlib
 
 
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
@@ -64,6 +65,10 @@ def put_user(user_id):
 
     for k, v in body_request.items():
         if k not in ['id', 'email', 'created_at', 'updated_at']:
+            if k == "password":
+                m = hashlib.md5()
+                m.update(str.encode(v))
+                v = str(m.hexdigest())
             setattr(user, k, v)
 
     storage.save()
