@@ -1,12 +1,14 @@
 #!/usr/bin/python3
 """ Script that imports a Blueprint and runs Flask """
 from flask import Flask, make_response, jsonify
+from flask_cors import CORS
 from models import storage
 from api.v1.views import app_views
 from os import getenv
 
 app = Flask(__name__)
 app.register_blueprint(app_views)
+CORS(app, resources={r"/*": {"origins": "0.0.0.0"}})
 
 
 @app.teardown_appcontext
