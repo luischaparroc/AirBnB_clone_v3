@@ -65,10 +65,6 @@ def put_user(user_id):
 
     for k, v in body_request.items():
         if k not in ['id', 'email', 'created_at', 'updated_at']:
-            if k == "password":
-                m = hashlib.md5()
-                m.update(str.encode(v))
-                v = str(m.hexdigest())
             setattr(user, k, v)
 
     storage.save()

@@ -47,11 +47,6 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = self.created_at
-        if self.__class__.__name__ == "User":
-            if "password" in self.__dict__:
-                m = hashlib.md5()
-                m.update(str.encode(self.password))
-                self.password = str(m.hexdigest())
 
     def __str__(self):
         """String representation of the BaseModel class"""
@@ -61,15 +56,10 @@ class BaseModel:
     def save(self):
         """updates the attribute 'updated_at' with the current datetime"""
         self.updated_at = datetime.utcnow()
-        if self.__class__.__name__ == "User":
-            if "password" in self.__dict__:
-                m = hashlib.md5()
-                m.update(str.encode(self.password))
-                self.password = str(m.hexdigest())
         models.storage.new(self)
         models.storage.save()
 
-    def to_dict(self):
+    def to_dict(self, dump=None):
         """returns a dictionary containing all keys/values of the instance"""
         new_dict = self.__dict__.copy()
         if "created_at" in new_dict:
@@ -79,8 +69,8 @@ class BaseModel:
         new_dict["__class__"] = self.__class__.__name__
         if "_sa_instance_state" in new_dict:
             del new_dict["_sa_instance_state"]
-        if getenv('HBNB_TYPE_STORAGE') == 'db':
-            if "password" in new_dict:
+        if getenv("HBNB_TYPE_STORAGE") == "db":
+            if 'password' in new_dict:
                 del new_dict["password"]
         return new_dict
 
