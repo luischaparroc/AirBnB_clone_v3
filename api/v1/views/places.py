@@ -94,10 +94,10 @@ def places_search():
     the JSON in the body of the request
     """
     body_r = request.get_json()
-    if not body_r:
+    if body_r is None:
         abort(400, "Not a JSON")
 
-    if (
+    if not body_r or (
             not body_r.get('states') and
             not body_r.get('cities') and
             not body_r.get('amenities')
@@ -134,9 +134,8 @@ def places_search():
         HBNB_API_HOST = getenv('HBNB_API_HOST')
         HBNB_API_PORT = getenv('HBNB_API_PORT')
 
-        host = '0.0.0.0' if not HBNB_API_HOST else HBNB_API_HOST
         port = 5000 if not HBNB_API_PORT else HBNB_API_PORT
-        first_url = "http://{}:{}/api/v1/places/".format(host, port)
+        first_url = "http://0.0.0.0:{}/api/v1/places/".format(port)
         while i < limit:
             place = places[i]
             url = first_url + '{}/amenities'
