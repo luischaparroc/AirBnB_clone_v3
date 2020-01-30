@@ -7,6 +7,7 @@ from models.city import City
 from models.place import Place
 import requests
 import json
+from os import getenv
 
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'],
@@ -130,9 +131,15 @@ def places_search():
         ams = [storage.get("Amenity", id) for id in body_r.get('amenities')]
         i = 0
         limit = len(places)
+        HBNB_API_HOST = getenv('HBNB_API_HOST')
+        HBNB_API_PORT = getenv('HBNB_API_PORT')
+
+        host = '0.0.0.0' if not HBNB_API_HOST else HBNB_API_HOST
+        port = 5000 if not HBNB_API_PORT else HBNB_API_PORT
+        first_url = "http://{}:{}/api/v1/places/".format(host, port)
         while i < limit:
             place = places[i]
-            url = 'http://0.0.0.0:5000/api/v1/places/{}/amenities'
+            url = first_url + '{}/amenities'
             req = url.format(place.id)
             response = requests.get(req)
             am_d = json.loads(response.text)
