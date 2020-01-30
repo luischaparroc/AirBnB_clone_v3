@@ -5,6 +5,8 @@ from flask import jsonify, abort, make_response, request
 from models import storage
 from models.city import City
 from models.place import Place
+import requests
+import json
 
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'],
@@ -81,3 +83,58 @@ def put_place(place_id):
 
     storage.save()
     return make_response(jsonify(place.to_dict()), 200)
+
+
+@app_views.route('/places_search', methods=['POST'],
+                 strict_slashes=False)
+def places_search():
+    """
+    Retrieves all Place objects depending of
+    the JSON in the body of the request
+    """
+    body_r = request.get_json()
+    if not body_r:
+        abort(400, "Not a JSON")
+
+    if (
+            not body_r.get('states') and
+            not body_r.get('cities') and
+            not body_r.get('amenities')
+    ):
+        places = storage.all(Place)
+        return jsonify([place.to_dict() for place in places.values()])
+
+    places = []
+
+    if body_r.get('states'):
+        states = [storage.get("State", id) for id in body_r.get('states')]
+
+        for state in states:
+            for city in state.cities:
+                for place in city.places:
+                    places.append(place)
+
+    if body_r.get('cities'):
+        cities = [storage.get("City", id) for id in body_r.get('cities')]
+
+        for city in cities:
+            for place in city.places:
+                if place not in places:
+                    places.append(place)
+
+    if not places:
+        places = storage.all(Place)
+        places = [place for place in places.values()]
+
+    if body_r.get('amenities'):
+        ams = [storage.get("Amenity", id) for id in body_r.get('amenities')]
+        for i, place in enumerate(places):
+            for amenity in ams:
+                url = 'http://0.0.0.0:5000/api/v1/places/{}/amenities'
+                req = url.format(place.id)
+                response = requests.get(req)
+                amenities = json.loads(response.text)
+                if amenity not in amenities:
+                    places.pop(i)
+                    break
+    return jsonify([place.to_dict() for place in places])
