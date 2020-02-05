@@ -16,7 +16,9 @@ def users():
 
 @app_views.route('/users/<user_id>', methods=['GET'], strict_slashes=False)
 def r_user_id(user_id):
-    """ Retrieves a User object """
+    """
+    file: yml/users_get.yml
+    """
     user = storage.get("User", user_id)
     if not user:
         abort(404)
