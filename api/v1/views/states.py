@@ -8,14 +8,18 @@ from models.state import State
 
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
 def states():
-    """ Retrieves the list of all State objects """
+    """
+    file: yml/cities_by_state_get.yml
+    """
     d_states = storage.all(State)
     return jsonify([obj.to_dict() for obj in d_states.values()])
 
 
 @app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
 def r_state_id(state_id):
-    """ Retrieves a State object """
+    """
+    file: yml/states_get.yml
+    """
     state = storage.get("State", state_id)
     if not state:
         abort(404)
@@ -25,7 +29,9 @@ def r_state_id(state_id):
 @app_views.route('/states/<state_id>', methods=['DELETE'],
                  strict_slashes=False)
 def del_state(state_id):
-    """ Deletes a State object """
+    """
+    file: yml/states_del.yml
+    """
     state = storage.get("State", state_id)
     if not state:
         abort(404)
@@ -36,7 +42,9 @@ def del_state(state_id):
 
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
 def post_state():
-    """ Creates a State object """
+    """
+    file: states_post.yml
+    """
     new_state = request.get_json()
     if not new_state:
         abort(400, "Not a JSON")
@@ -50,7 +58,9 @@ def post_state():
 
 @app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
 def put_state(state_id):
-    """ Updates a State object """
+    """
+    file: yml/states_put.yml
+    """
     state = storage.get("State", state_id)
     if not state:
         abort(404)

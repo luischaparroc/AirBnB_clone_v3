@@ -16,7 +16,9 @@ def amenities():
 @app_views.route('/amenities/<amenity_id>', methods=['GET'],
                  strict_slashes=False)
 def r_amenity_id(amenity_id):
-    """ Retrieves Amenity object """
+    """
+    file: yml/amenities_get.yml
+    """
     amenity = storage.get("Amenity", amenity_id)
     if not amenity:
         abort(404)
@@ -26,7 +28,9 @@ def r_amenity_id(amenity_id):
 @app_views.route('/amenities/<amenity_id>', methods=['DELETE'],
                  strict_slashes=False)
 def del_amenity(amenity_id):
-    """ Deletes a Amenity object """
+    """
+    file: yml/amenities_del.yml
+    """
     amenity = storage.get("Amenity", amenity_id)
     if not amenity:
         abort(404)
@@ -37,7 +41,9 @@ def del_amenity(amenity_id):
 
 @app_views.route('/amenities', methods=['POST'], strict_slashes=False)
 def post_amenity():
-    """ Creates a Amenity object """
+    """
+    file: yml/amenities_post.yml
+    """
     new_amenity = request.get_json()
     if not new_amenity:
         abort(400, "Not a JSON")
@@ -52,7 +58,9 @@ def post_amenity():
 @app_views.route('/amenities/<amenity_id>', methods=['PUT'],
                  strict_slashes=False)
 def put_amenity(amenity_id):
-    """ Updates a Amenity object """
+    """
+    file: yml/amenities_put.yml
+    """
     amenity = storage.get("Amenity", amenity_id)
     if not amenity:
         abort(404)
